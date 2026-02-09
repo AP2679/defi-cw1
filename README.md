@@ -97,7 +97,7 @@ OR
 
 <img src="images/architecture.png" alt="main_page" width="400"/>
 
-
+tbd
 
 ## Smart Contracts
 tbd
@@ -108,6 +108,7 @@ tbd
 
 
 ## Security Considerations
+tbd
 
 - **Marketplace**:
     - For auctions, to prevent malicious bidding, all bids must be non-retractable.
@@ -145,5 +146,7 @@ along with `PokemonCard.json` and `Marketplace.json` ABI files, which are all ma
 *\*card images credit: https://pokemondb.net/*
 
 ## Contribution
+tbd
 
 ## Use of GenAI
+tbd
