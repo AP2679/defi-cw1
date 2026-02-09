@@ -132,10 +132,6 @@ The frontend application has *6 pages* within `frontend/app/`:
 
 - **Swap** (`swap/page.js`): This page displays a feed of all active trade proposals. It shows public offers available to anyone, as well as private offers directed specifically to the connected user.
 
-    - *private* trading is not actually private, all transactions are published onto the blockchain, tx’s just don’t get shown to users if they are not relevant.
-    - Trades can be *public*, meaning that an advertisement for a requested card in return of another card(s), or none at all, is broadcasted onto the swap page.
-    - The trading interface was implemented later, and appended onto the PokemonMarketplace contract for simplicity.
-
 - **Create (Swap)** (`swap/create/page.js`): A form where users can propose a new trade. They can select which of their cards they want to offer and which cards they desire in return. They can make the offer public or direct it to a specific user's address.
 
 Within `frontend/utils/`, all pages interact with `config.js` to retrieve `POKEMON_CARD_ADDRESS` and `MARKETPLACE_ADDRESS` constants,
