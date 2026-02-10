@@ -99,25 +99,112 @@ OR
 
 tbd
 
-## Smart Contracts
-tbd
+## Backend Structure/ Architecture Overview:
+The backend of the application is composed of two primary smart contracts deployed on the Ethereum-compatible blockchain:
+### PokemonCard.sol (NFT Layer)
 
+**Main Functions**
+- `mint()`: Creates a new Pokémon NFT and assigns it to a player wallet.
+- `_safeMint()`: Ensures NFT is minted only to valid receiver contracts or wallets.
+- `_setTokenURI()`: Stores IPFS metadata reference for each Pokémon card.
+- `pause()` / `unpause()`: Allows contract owner to stop minting or transfers during emergencies.
+
+**Execution Flow**
+- Contract owner calls `mint()`.
+- A new token ID is generated using internal counter.
+- NFT is minted to the recipient wallet.
+- Metadata URI is assigned.
+- Pokemon stats are stored in internal mapping.
+- `CardMinted` event is emitted.
+
+### PokemonMarketplace (Trading Layer)
+**Main Functions**
+- `listCard()` Lists an NFT for fixed price or auction. Transfers NFT into marketplace escrow.
+- `buyCard()` Allows buyers to purchase fixed-price NFTs. Transfers NFT to buyer and ETH to seller.
+- `bid()` Allows users to place bids on active auctions.
+- `endAuction()` Finalizes auction, transferring NFT to winner and ETH to seller.
+- `withdraw()` Allows users to withdraw pending refunds or fallback payments.
+- `cancelListing()` Allows sellers to cancel listings if conditions allow.
+- `createSwapOffer()` Creates multi-NFT swap offers with optional counterparty restrictions.
+- `executeSwap()` Executes NFT swaps between users using escrowed tokens.
+- `cancelSwap()`Cancels swap and returns escrowed NFTs to owner.
+
+**Execution Flow**
+**Fixed Price Sale Flow**
+- Seller calls `listCard()`
+- NFT transferred into marketplace escrow
+- Buyer calls `buyCard()`
+- ETH sent to seller
+- NFT transferred to buyer
+
+**Swap Flow**
+- User creates swap offer using `createSwapOffer()`
+- NFTs transferred into escrow
+- Counterparty executes swap via `executeSwap()`
+- NFTs exchanged securely
+
+**Emergency Flow**
+- Admin calls `pause()`
+- All trading functions disabled
+- Admin calls `unpause()` to resume operations
 
 ## Testing
-tbd
+The backend smart contracts were tested using **Hardhat**, **Mocha**, and **Chai** to ensure correct behaviour, security, and reliability across normal usage scenarios and edge cases. Testing focused on validating NFT creation, marketplace trading flows, auction logic, swap functionality, and security protections such as access control, reentrancy protection, and emergency pause behaviour.
 
+### Test Files and Purpose
+- `pokemonCardCreationTests.js` Tests NFT minting, metadata storage, stat validation, and ownership assignment.
+- `marketplace.listing.test.js` Tests NFT listing logic and escrow transfer behaviour.
+- `marketplace.buy.test.js` Tests fixed price purchase flow and payment validation.
+- `marketplace.auction.bid.test.js` Tests auction bidding rules, highest bidder tracking, and refund behaviour.
+- `marketplace.withdraw.test.js` Tests secure withdrawal pattern and pending withdrawal balances.
+- `marketplace.swap.test.js` Tests swap offer creation, execution, counterparty restrictions, and cancellation.
+- `marketplace.pause.test.js` Tests emergency pause functionality and ensures trading functions revert when paused.
+- `marketplace.edgecases.test.js` Tests failure scenarios, invalid states, and fallback payment safety.
+
+
+
+### Coverage Report 
+Generated from `npx hardhat coverage`
+
+```bash
+-------------------------|----------|----------|----------|----------|----------------|
+File                     |  % Stmts | % Branch |  % Funcs |  % Lines |Uncovered Lines |
+-------------------------|----------|----------|----------|----------|----------------|
+ contracts/              |    92.75 |    68.37 |     87.5 |    91.67 |                |
+  PokemonCard.sol        |       80 |      100 |    66.67 |    83.33 |             59 |
+  PokemonMarketplace.sol |    93.75 |    67.71 |    92.31 |    92.31 |... 181,193,281 |
+ contracts/mock/         |      100 |      100 |      100 |      100 |                |
+  RejectEther.sol        |      100 |      100 |      100 |      100 |                |
+-------------------------|----------|----------|----------|----------|----------------|
+All files                |    92.86 |    68.37 |    88.24 |    91.86 |                |
+-------------------------|----------|----------|----------|----------|----------------|
+```
 
 ## Security Considerations
-tbd
 
-- **Marketplace**:
-    - For auctions, to prevent malicious bidding, all bids must be non-retractable.
-    - When an auction is completed (when the time limit expires), any address may finalise the auction, this is to prevent a malicious owner from burning the transaction by never finalising it.
+### PokemonCard Security
+- **Access Control**: Only the contract owner can mint new Pokemon NFTs using onlyOwner. Prevents unauthorized token creation.
+- **Safe Transfers**: Uses ERC721 safe transfer functions to ensure NFTs are only sent to compatible addresses.
+- **Pause Functionality**: Contract owner can pause and unpause minting and transfer-related operations during emergencies.
+
+### PokemonMarketplace Security
+- **Reentrancy Protection**: Uses ReentrancyGuard on all state-changing functions involving ETH or NFT transfers.
+- **Escrow Protection**: NFTs are transferred into the marketplace contract before listing, preventing sellers from withdrawing assets after listing.
+- **Secure Withdrawal Pattern**: Failed ETH transfers are redirected into pendingWithdrawals mapping, preventing denial-of-service attacks from malicious receivers.
+- **Access Validation**: Only NFT owners can list NFTs for sale or auction.
+- **Minimum Pricing Validation**: Zero-value listings are rejected, all auctions must start with valid bid values.
+- **Auction Safety Controls**:
+    - To prevent malicious bidding, all bids must be non-retractable.
+    - Bids can only increase
+    - Late bidding after auction expiration is prevented
+    - When an auction is completed (when the time limit expires), any address may finalise the auction, this prevents a malicious owner from burning the transaction by never finalising it.
+    - Contract is able to keep track of highest bidder securely
     - When finalised, all ETH is returned to the failed bidders, while the winner’s ETH is transferred to the auction owner.
-
-- **Swaps**:
-    - *private* trading is not actually private, all transactions are published onto the blockchain, tx’s just don’t get shown to users if they are not relevant.
-    - Trades can be *public*, meaning that an advertisement for a requested card in return of another card(s), or none at all, is broadcasted onto the swap page.
+- **Front-Running Mitigation**: Minimum bid increments reduce the risk of last-second micro-bid front-running.
+- **Emergency Pause Mechanism**: Contract owner can pause marketplace operations in case of detected vulnerability or exploit.
+- **Secure Trading Swaps**:
+    - Initiating a *private* trade is not actually private, all transactions are published onto the blockchain, the frontend simply just doesn't show them to you.
+    - Trades that are set to *public*, are essentially an advertisement for a requested card in return of owned card(s) by the advertiser (or in return of no card at all), this is broadcasted onto the swap page.
 
 ## Frontend Design
 
@@ -145,4 +232,4 @@ along with `PokemonCard.json` and `Marketplace.json` ABI files, which are all ma
 tbd
 
 ## Use of GenAI
-tbd
+We have used GenAI to streamline our workflow, assisting with tasks like CSS editing, scripting, and implementing various functionalities, allowing us to work more efficiently and focus on core development, including contracts, core front-end functionalities and integration of components.
