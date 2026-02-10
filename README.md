@@ -69,7 +69,7 @@ In accounts page, to set up a test account:
 
 1. From the main page click:
 
-<img src="images/main.png" alt="main_page" width="200"/>
+<img src="images/main.png" alt="screenshot-of-main-page" width="200"/>
 
 2. click 'Custom'
 3. click 'Add custom network'
@@ -79,7 +79,7 @@ In accounts page, to set up a test account:
     - **Chain ID**: 31337
     - **Currency symbol**: ETH
 
-<img src="images/edit_network.png" alt="main_page" width="200"/>
+<img src="images/edit_network.png" alt="screenshot-of-edit-network-page" width="200"/>
 
 ### Etc.
 
@@ -87,7 +87,7 @@ If any issues with nonce:
 
 - Go to ≡ -> Settings -> Advanced:
 
-<img src="images/advanced.png" alt="main_page" width="200"/>
+<img src="images/advanced.png" alt="screenshot-of-advanced-page" width="200"/>
 
 OR
 
@@ -242,10 +242,10 @@ Andreas
 
 Pascal
 - Frontend Development
-- Frontend Testing
+- Frontend Manual Testing
 - Frontend Documentation
 - Frontend Security
-- Frontend Optimization
+- Smart Contract Development
 - Smart Contract Deployment
 - Frontend Deployment
 - Integration of components\*
