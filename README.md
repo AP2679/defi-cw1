@@ -97,9 +97,8 @@ OR
 
 <img src="images/architecture.png" alt="main_page" width="400"/>
 
-tbd
 
-## Backend Structure/ Architecture Overview:
+## Backend Structure/Architecture Overview:
 The backend of the application is composed of two primary smart contracts deployed on the Ethereum-compatible blockchain:
 ### PokemonCard.sol (NFT Layer)
 
@@ -129,8 +128,10 @@ The backend of the application is composed of two primary smart contracts deploy
 - `executeSwap()` Executes NFT swaps between users using escrowed tokens.
 - `cancelSwap()`Cancels swap and returns escrowed NFTs to owner.
 
-**Execution Flow**
+**Execution Flows:**
+
 **Fixed Price Sale Flow**
+
 - Seller calls `listCard()`
 - NFT transferred into marketplace escrow
 - Buyer calls `buyCard()`
@@ -138,6 +139,7 @@ The backend of the application is composed of two primary smart contracts deploy
 - NFT transferred to buyer
 
 **Swap Flow**
+
 - User creates swap offer using `createSwapOffer()`
 - NFTs transferred into escrow
 - Counterparty executes swap via `executeSwap()`
@@ -152,6 +154,7 @@ The backend of the application is composed of two primary smart contracts deploy
 The backend smart contracts were tested using **Hardhat**, **Mocha**, and **Chai** to ensure correct behaviour, security, and reliability across normal usage scenarios and edge cases. Testing focused on validating NFT creation, marketplace trading flows, auction logic, swap functionality, and security protections such as access control, reentrancy protection, and emergency pause behaviour.
 
 ### Test Files and Purpose
+
 - `pokemonCardCreationTests.js` Tests NFT minting, metadata storage, stat validation, and ownership assignment.
 - `marketplace.listing.test.js` Tests NFT listing logic and escrow transfer behaviour.
 - `marketplace.buy.test.js` Tests fixed price purchase flow and payment validation.
@@ -183,11 +186,13 @@ All files                |    92.86 |    68.37 |    88.24 |    91.86 |          
 ## Security Considerations
 
 ### PokemonCard Security
+
 - **Access Control**: Only the contract owner can mint new Pokemon NFTs using onlyOwner. Prevents unauthorized token creation.
 - **Safe Transfers**: Uses ERC721 safe transfer functions to ensure NFTs are only sent to compatible addresses.
 - **Pause Functionality**: Contract owner can pause and unpause minting and transfer-related operations during emergencies.
 
 ### PokemonMarketplace Security
+
 - **Reentrancy Protection**: Uses ReentrancyGuard on all state-changing functions involving ETH or NFT transfers.
 - **Escrow Protection**: NFTs are transferred into the marketplace contract before listing, preventing sellers from withdrawing assets after listing.
 - **Secure Withdrawal Pattern**: Failed ETH transfers are redirected into pendingWithdrawals mapping, preventing denial-of-service attacks from malicious receivers.
@@ -209,6 +214,7 @@ All files                |    92.86 |    68.37 |    88.24 |    91.86 |          
 ## Frontend Design
 
 The frontend application has *6 pages* within `frontend/app/`:
+
 - **Landing Page** (`page.js`): The welcoming page that introduces the Pokemon Card NFT project, takes you to its features (mint, marketplace,trading, view dashboard), and allows connection to *MetaMask*.
 
 - **Mint** (`mint/page.js`): A dedicated page for creating new Pokemon Card NFTs. The contract owner can access this functionality to mint new cards with specific attributes like name, element, and power level. Currently the page is accessible by any user, but only the contract owner may use it to mint new cards.
@@ -224,12 +230,35 @@ The frontend application has *6 pages* within `frontend/app/`:
 Within `frontend/utils/`, all pages interact with `config.js` to retrieve `POKEMON_CARD_ADDRESS` and `MARKETPLACE_ADDRESS` constants,
 along with `PokemonCard.json` and `Marketplace.json` ABI files, which are all manually configured and retrieved from the hardhat compilation.
 
-*\*background image credit: https://www.artstation.com/artwork/1xAyZ8*
-
-*\*card images credit: https://pokemondb.net/*
-
 ## Contribution
-tbd
+Andreas 
+- Smart Contract Development
+- Smart Contract Testing
+- Smart Contract Deployment
+- Smart Contract Integration
+- Smart Contract Security
+- Smart Contract Documentation
+- Integration of components\*
+
+Pascal
+- Frontend Development
+- Frontend Testing
+- Frontend Documentation
+- Frontend Security
+- Frontend Optimization
+- Smart Contract Deployment
+- Frontend Deployment
+- Integration of components\*
+
+*\*During integration of components, we worked together to ensure the full understanding of the frontend and backend, ensure all components are working as intended.*
+
 
 ## Use of GenAI
 We have used GenAI to streamline our workflow, assisting with tasks like CSS editing, scripting, and implementing various functionalities, allowing us to work more efficiently and focus on core development, including contracts, core front-end functionalities and integration of components.
+
+## Use of copyrighted material
+*this is a private project not meant for public deployment, for visual appeal we used artwork which may or may not be open-sourced, credited below.*
+
+*\*background image credit: https://www.artstation.com/artwork/1xAyZ8*
+
+*\*card images credit: https://pokemondb.net/*
