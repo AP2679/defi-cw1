@@ -133,7 +133,7 @@ export default function MintPage() {
     <div style={styles.container}>
       <div style={styles.card}>
         <button onClick={() => router.push('/')} style={styles.backButton}>← Back to Landing</button>
-        <h1 style={styles.title}>Mint New Pokémon</h1>
+        <h1 style={styles.title}>Mint New Pokemon</h1>
         <p>IMPORTANT: Only the Contract Owner can mint</p>
         
         <form onSubmit={handleMint} style={styles.form}>
@@ -180,7 +180,7 @@ export default function MintPage() {
           </div>
 
           <div style={styles.group}>
-            <label style={styles.label}>Image URI (or IPFS Hash)</label>
+            <label style={styles.label}>Image URI</label>
             <input 
               name="imageURI" 
               value={formData.imageURI} 

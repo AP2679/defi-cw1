@@ -1,6 +1,6 @@
 # Decentralized Pokemon Card NFT Project
-This project is a Decentralized Application (dApp) deployed on a local Hardhat testnet, using the Ethereum ERC721 contract standard.
-The frontend for this project is implemented through `next.js`, a react-based framework.
+This project is a Decentralized Application (dApp) deployed on a local Hardhat testnet, using the **Ethereum ERC721** contract standard.
+The frontend for this project is implemented through **Next.js**, a react-based framework.
 
 
 
@@ -94,9 +94,15 @@ OR
 - use **Rabby** instead which allows you to set the nonce more granularly.
 
 ## Overall Project Architecture
+- The user interacts with the browser, loaded with a **Next.js** frontend client as the user interface.
+
+- This client has both a *View Layer* for rendering pages and a *Service Layer*, which encapsulates the logic handling for interfacing with the backend solidity contracts and the browser wallet.
+
+- An **Ethers.js** provider bridges the browser's wallet (MetaMask, Rabby) and handles identity and transaction management, where the provider transmits *signed* payloads to the hardhat node using a **JSON-RPC** connection.
+
+- The hardhat node validates the transactions and executes the smart contract logic to alter the ledger state, and returns a transaction hash to the client to confirm the instruction has been added to the block.
 
 <img src="images/architecture.png" alt="main_page" width="400"/>
-
 
 ## Backend Structure/Architecture Overview:
 The backend of the application is composed of two primary smart contracts deployed on the Ethereum-compatible blockchain:

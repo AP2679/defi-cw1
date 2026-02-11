@@ -45,37 +45,50 @@ export default function Dashboard() {
     setUserAddress(address);
     
     const { pokemonContract } = getContracts(connection.signer);
-    const foundCards = [];
 
-    // 2. Scan the Blockchain
-    // We loop through the first 30 IDs. In a real app, you'd use The Graph or an Enumerable extension.
-    for (let i = 0; i < 200; i++) {
-      try {
-        // Optimistic check: Does this token exist and do I own it?
-        const owner = await pokemonContract.ownerOf(i);
-        
-        if (owner.toLowerCase() === address.toLowerCase()) {
-          // 3. Fetch Data for owned cards
-          const stats = await pokemonContract.pokemonDetails(i);
-          const uri = await pokemonContract.tokenURI(i);
-          
-          foundCards.push({
-            id: i,
-            name: stats.name,
-            type: stats.element,
-            power: stats.powerLevel.toString(),
-            uri: uri
-          });
-        }
-      } catch (err) {
-        // If we hit an error (like "Token does not exist"), we just skip it
-        // But if it's Token 0 failing, we might want to log it
-        if (i === 0) console.warn("Token 0 not found (might not be minted yet)");
+    try {
+      // 2. Optimization: Check balance first
+      const balance = await pokemonContract.balanceOf(address);
+      if (Number(balance) === 0) {
+        setMyCards([]);
+        setLoading(false);
+        return;
       }
-    }
 
-    // 4. Update UI State
-    setMyCards(foundCards);
+      // 3. Scan in parallel
+      // We scan a range (0-200). In production, you might want to fetch totalSupply() if available.
+      const scanPromises = [];
+      for (let i = 0; i < 200; i++) {
+        scanPromises.push(
+          pokemonContract.ownerOf(i)
+            .then(owner => ({ id: i, owner }))
+            .catch(() => null) // Ignore non-existent tokens
+        );
+      }
+
+      const results = await Promise.all(scanPromises);
+      const ownedIds = results
+        .filter(res => res && res.owner.toLowerCase() === address.toLowerCase())
+        .map(res => res.id);
+
+      // 4. Fetch details for owned cards in parallel
+      const detailsPromises = ownedIds.map(async (id) => {
+        const stats = await pokemonContract.pokemonDetails(id);
+        const uri = await pokemonContract.tokenURI(id);
+        return {
+          id,
+          name: stats.name,
+          type: stats.element,
+          power: stats.powerLevel.toString(),
+          uri: uri
+        };
+      });
+
+      const foundCards = await Promise.all(detailsPromises);
+      setMyCards(foundCards);
+    } catch (err) {
+      console.error("Error loading collection:", err);
+    }
     setLoading(false);
   };
 
@@ -149,7 +162,7 @@ export default function Dashboard() {
         </div>
       ) : (
         <div style={styles.grid}>
-          {myCards.length === 0 ? <p style={{color: '#cacacaff'}}>No cards found. Go mint some!</p> : null}
+          {myCards.length === 0 ? <p style={{color: '#cacacaff'}}>No cards found. Go to the Marketplace!</p> : null}
           
           {myCards.map((card) => (
             <div key={card.id} style={styles.card}>
