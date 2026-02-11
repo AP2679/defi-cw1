@@ -109,9 +109,9 @@ The backend of the application is composed of two primary smart contracts deploy
 ### PokemonCard.sol (NFT Layer)
 
 **Main Functions**
-- `mint()`: Creates a new Pokémon NFT and assigns it to a player wallet.
+- `mint()`: Creates a new Pokemon NFT and assigns it to a player wallet.
 - `_safeMint()`: Ensures NFT is minted only to valid receiver contracts or wallets.
-- `_setTokenURI()`: Stores IPFS metadata reference for each Pokémon card.
+- `_setTokenURI()`: Stores metadata reference for each Pokemon card.
 - `pause()` / `unpause()`: Allows contract owner to stop minting or transfers during emergencies.
 
 **Execution Flow**
@@ -193,8 +193,8 @@ All files                |    92.86 |    68.37 |    88.24 |    91.86 |          
 
 ### PokemonCard Security
 
-- **Access Control**: Only the contract owner can mint new Pokemon NFTs using onlyOwner. Prevents unauthorized token creation.
-- **Safe Transfers**: Uses ERC721 safe transfer functions to ensure NFTs are only sent to compatible addresses.
+- **Access Control**: Only the contract owner can mint new Pokemon NFTs using `onlyOwner`. Prevents unauthorized token creation.
+- **Safe Transfers**: Uses **ERC721** safe transfer functions to ensure NFTs are only sent to compatible addresses.
 - **Pause Functionality**: Contract owner can pause and unpause minting and transfer-related operations during emergencies.
 
 ### PokemonMarketplace Security
